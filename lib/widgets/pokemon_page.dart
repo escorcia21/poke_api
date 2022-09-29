@@ -10,8 +10,10 @@ class PokePage extends StatefulWidget {
 class _PokePageState extends State<PokePage> {
   @override
   Widget build(BuildContext context) {
-    final PageController controller = PageController();
+    final PageController controller =
+        PageController(viewportFraction: 1 / 3, initialPage: 1);
     return PageView.builder(
+      padEnds: false,
       controller: controller,
       itemBuilder: (BuildContext context, int index) {
         return itemCard(index + 1);

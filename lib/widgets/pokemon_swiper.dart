@@ -11,13 +11,17 @@ class PokeSwiper extends StatefulWidget {
 class _PokeSwiperState extends State<PokeSwiper> {
   @override
   Widget build(BuildContext context) {
-    return Swiper(
-      itemBuilder: (BuildContext context, int index) {
-        return itemCard(index + 1);
-      },
-      itemCount: 4,
-      itemWidth: 300.0,
-      layout: SwiperLayout.STACK,
+    return LayoutBuilder(
+      builder: ((context, constraints) {
+        return Swiper(
+          itemBuilder: (BuildContext context, int index) {
+            return itemCard(index + 10);
+          },
+          itemCount: 4,
+          itemWidth: constraints.maxWidth * 0.7,
+          layout: SwiperLayout.STACK,
+        );
+      }),
     );
   }
 }

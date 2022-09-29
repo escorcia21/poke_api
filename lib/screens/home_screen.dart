@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
         title: const Center(child: Text('Poke API')),
       ),
       body: Column(
-        children: [
+        children: const [
           Expanded(flex: 1, child: PokePage()),
           Expanded(flex: 2, child: PokeSwiper())
         ],
