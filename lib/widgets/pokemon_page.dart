@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:poke_api/provider/pokeapi.dart';
+import 'package:poke_api/widgets/cards/normal_card.dart';
+
+import '../models/pokemon_model.dart';
 
 class PokePage extends StatefulWidget {
   const PokePage({Key? key}) : super(key: key);
@@ -8,41 +12,49 @@ class PokePage extends StatefulWidget {
 }
 
 class _PokePageState extends State<PokePage> {
+  int page = 0;
+  late Future<List<Pokemon>> _pokemonsList;
+  late PageController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pokemonsList = PokemonProvider().getPokemons(page);
+    _scrollController = PageController(viewportFraction: 1 / 2, initialPage: 0);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final PageController controller =
-        PageController(viewportFraction: 1 / 3, initialPage: 1);
-    return PageView.builder(
-      padEnds: false,
-      controller: controller,
-      itemBuilder: (BuildContext context, int index) {
-        return itemCard(index + 1);
-      },
-      itemCount: 4,
-    );
+    return FutureBuilder<List<Pokemon>>(
+        future: _pokemonsList,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return PageView.builder(
+            padEnds: false,
+            controller: _scrollController,
+            itemBuilder: (BuildContext context, int index) {
+              return NormalCard(pokemon: snapshot.data![index]);
+            },
+            itemCount: snapshot.data!.length,
+            onPageChanged: ((index) {
+              if (index == snapshot.data!.length - 5) {
+                getNewPage();
+              }
+            }),
+          );
+        });
   }
-}
 
-Widget itemCard(int pokemonId) {
-  return Column(
-    children: [
-      const Text('Pokemon'),
-      Expanded(
-        flex: 1,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.red,
-            ),
-            child: Image.network(
-              "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$pokemonId.png",
-              fit: BoxFit.fill,
-            ),
-          ),
-        ),
-      ),
-    ],
-  );
+  getNewPage() async {
+    print('fetching new page');
+    final getprovider = PokemonProvider();
+    page += 10;
+    await getprovider.getPokemons(page).then((value) {
+      setState(() {
+        _pokemonsList.then((pokemons) => pokemons.addAll(value));
+      });
+    });
+  }
 }
