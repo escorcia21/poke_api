@@ -15,6 +15,15 @@ class _PokePageState extends State<PokePage> {
   int page = 0;
   late Future<List<Pokemon>> _pokemonsList;
   late PageController _scrollController;
+  final snackBar = SnackBar(
+      content: const Text('Fetching more pokemons...'),
+      action: SnackBarAction(
+        label: 'Close',
+        onPressed: () {
+          // Algo de código para ¡deshacer el cambio!
+        },
+        textColor: const Color(0xfff08030),
+      ));
 
   @override
   void initState() {
@@ -39,7 +48,7 @@ class _PokePageState extends State<PokePage> {
             },
             itemCount: snapshot.data!.length,
             onPageChanged: ((index) {
-              if (index == snapshot.data!.length - 5) {
+              if (index == snapshot.data!.length - 7) {
                 getNewPage();
               }
             }),
@@ -48,7 +57,7 @@ class _PokePageState extends State<PokePage> {
   }
 
   getNewPage() async {
-    print('fetching new page');
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
     final getprovider = PokemonProvider();
     page += 10;
     await getprovider.getPokemons(page).then((value) {

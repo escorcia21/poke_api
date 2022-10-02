@@ -14,6 +14,15 @@ class PokeSwiper extends StatefulWidget {
 class _PokeSwiperState extends State<PokeSwiper> {
   int page = 0;
   late Future<List<Pokemon>> _pokemonsList;
+  final snackBar = SnackBar(
+      content: const Text('Fetching more pokemons...'),
+      action: SnackBarAction(
+        label: 'Close',
+        onPressed: () {
+          // Algo de código para ¡deshacer el cambio!
+        },
+        textColor: const Color(0xfff08030),
+      ));
 
   @override
   void initState() {
@@ -41,7 +50,7 @@ class _PokeSwiperState extends State<PokeSwiper> {
                 itemWidth: constraints.maxWidth * 0.9,
                 layout: SwiperLayout.STACK,
                 onIndexChanged: ((value) {
-                  if (value == snapshot.data!.length - 5) {
+                  if (value == snapshot.data!.length - 7) {
                     getNewPage();
                   }
                 }),
@@ -53,7 +62,7 @@ class _PokeSwiperState extends State<PokeSwiper> {
   }
 
   getNewPage() async {
-    print('fetching new page');
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
     final getprovider = PokemonProvider();
     page += 10;
     await getprovider.getPokemons(page).then((value) {
